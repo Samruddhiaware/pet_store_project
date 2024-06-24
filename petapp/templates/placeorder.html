@@ -1,0 +1,286 @@
+{% extends 'navbar.html' %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pets View</title>
+    <style>
+        @media (min-width: 1025px) {
+            .h-custom {
+                height: 100vh !important;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    {% block myblock %}
+    <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
+
+    <script>
+        var amount = {{ totalbill }};
+        function initPayPalButton() {
+            document.getElementById("paypapl").style.visibility = "hidden";
+            paypal.Buttons({
+
+                style: {
+
+                    shape: 'rect',
+
+                    color: 'gold',
+
+                    layout: 'vertical',
+
+                    label: 'paypal',
+
+                },
+
+
+
+                createOrder: function (data, actions) {
+
+                    return actions.order.create({
+
+                        purchase_units: [{ "amount": { "currency_code": "USD", "value": amount } }]
+
+                    });
+
+                },
+
+
+
+                onApprove: function (data, actions) {
+
+                    return actions.order.capture().then(function (orderData) {
+
+                        console.log(orderData)
+
+                        // Full available details
+
+                        console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                        var data = orderData['id']
+                        //           var f = document.createElement('form');
+                        // f.action='http://localhost:8000/paymentsucess/';
+                        // f.method='GET';
+                        // f.target='_blank';
+
+                        // var i=document.createElement('input');
+                        // i.type='hidden';
+                        // i.name='fragment';
+                        // i.value=orderData['id'];
+                        // f.appendChild(i);
+
+                        // document.body.appendChild(f);
+
+                        // f.submit();
+                        odata = {{ orderobj.ordernumber }};
+                    window.location.replace("paymentsucess/" + data + "/" + odata + "/");
+
+                });
+
+        },
+
+        onError: function(err) {
+
+            console.log(err);
+
+        }
+    
+    }).render('#paypal-button-container');
+    
+    }
+
+
+
+    </script>
+    <section class="h-100 h-custom" style="background-color: #eee;">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body p-4">
+
+                            <div class="row">
+
+                                <div class="col-lg-7">
+                                    <h5 class="mb-3"><i class="fas fa-long-arrow-alt-left me-2"></i>Cart Summary</a>
+                                    </h5>
+                                    <hr>
+
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <div>
+                                            <p class="mb-1">Shopping cart : </p>
+                                        </div>
+                                        <!-- <div>
+                                            <p class="mb-0"><span class="text-muted">Sort by:</span> <a href="#!"
+                                                    class="text-body">price <i class="fas fa-angle-down mt-1"></i></a>
+                                            </p>
+                                        </div> -->
+                                    </div>
+
+                                    {% for i in cartobj %}
+                                    <div class="card mb-3 mb-lg-0">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div class="d-flex flex-row align-items-center">
+                                                    <div>
+                                                        <img src="{{i.pid.image.url}}" class="img-fluid rounded-3"
+                                                            alt="Shopping item"
+                                                            style="width: 105px; height: 75px; padding: auto; margin-right: 10px; border-radius: 5;">
+                                                    </div>
+                                                    <div class="ms-3">
+                                                        <h5>{{i.pid.name}}</h5>
+                                                        <p class="fw-normal mb-0">{{i.pid.species}}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex flex-row align-items-center">
+                                                    <div style="width: 50px;">
+                                                        <h5 class="fw-normal mb-0">{{i.quantity}}</h5>
+                                                    </div>
+                                                    <div style="width: 80px;">
+                                                        <h5 class="mb-0">{{i.totalamount}}</h5>
+                                                    </div>
+                                                    <a href="#!" style="color: #cecece;"><i
+                                                            class="fas fa-trash-alt"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+
+                                </div>
+                                <div class="col-lg-5">
+
+                                    <div class="card bg-primary text-white rounded-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                                <h5 class="mb-0">Your details</h5>
+                                            </div>
+
+
+                                            <!-- <form class="mt-4" method="post">
+                                                {% csrf_token %}
+                                                <div data-mdb-input-init class="form-outline form-white mb-4">
+                                                    <input type="text" id="typeName"
+                                                        class="form-control form-control-lg" siez="17"
+                                                        placeholder="Your First Name" name="fn"
+                                                        value="{{orderobj.firstname}}" />
+                                                    <label class="form-label" for="typeName">First Name</label>
+                                                </div>
+                                                <div data-mdb-input-init class="form-outline form-white mb-4">
+                                                    <input type="text" id="typeName"
+                                                        class="form-control form-control-lg" siez="17"
+                                                        placeholder="Your Last Name" name="ln"
+                                                        value="{{orderobj.lastname}}" />
+                                                    <label class="form-label" for="typeName">Last Name</label>
+                                                </div>
+
+                                                <div data-mdb-input-init class="form-outline form-white mb-4">
+                                                    <input type="text" id="typeText"
+                                                        class="form-control form-control-lg" siez="17"
+                                                        placeholder="Your Address" maxlength="50" name="address"
+                                                        value="{{orderobj.address}}" />
+                                                    <label class="form-label" for="typeText">Address</label>
+                                                </div>
+
+                                                <div class="row mb-4">
+                                                    <div class="col-md-6">
+                                                        <div data-mdb-input-init class="form-outline form-white">
+                                                            <input type="text" id="typeExp"
+                                                                class="form-control form-control-lg"
+                                                                placeholder="Your State" size="7" id="exp"
+                                                                maxlength="15" name="state"
+                                                                value="{{orderobj.state}}" />
+                                                            <label class="form-label" for="typeExp">State</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div data-mdb-input-init class="form-outline form-white">
+                                                            <input type="text" id="typeText"
+                                                                class="form-control form-control-lg"
+                                                                placeholder="Your City" size="1" minlength="3"
+                                                                maxlength="15" name="city" value="{{orderobj.city}}" />
+                                                            <label class="form-label" for="typeText">City</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-4">
+                                                    <div class="col-md-6">
+                                                        <div data-mdb-input-init class="form-outline form-white">
+                                                            <input type="number" id="typeExp"
+                                                                class="form-control form-control-lg"
+                                                                placeholder="Pincode" size="7" id="exp" minlength="7"
+                                                                maxlength="8" name="pin" value="{{orderobj.pincode}}" />
+                                                            <label class="form-label" for="typeExp">Pincode</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div data-mdb-input-init class="form-outline form-white">
+                                                            <input type="number" id="typeText"
+                                                                class="form-control form-control-lg"
+                                                                placeholder="Phone No." size="1" minlength="3"
+                                                                maxlength="10" name="phone"
+                                                                value="{{orderobj.phonenumber}}" />
+                                                            <label class="form-label" for="typeText">Phone
+                                                                Number</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr class="my-4">
+
+                                                <div class="d-flex justify-content-between">
+                                                    <p class="mb-2">Order placed on {{orderobj.orderdate}}</p>
+                                                    <p class="mb-2">Total Bill</p>
+                                                    <p class="mb-2">Rs. {{totalbill}}</p>
+                                                </div>
+
+                                                
+
+                                            </form> -->
+
+
+
+                                            <div class="d-flex justify-content-center">
+                                                <div class="sale my-3">
+                                                    <div id="paypal-button-container"></div>
+                                                </div>
+                                                <button onclick="initPayPalButton()" name="paypapl" id="paypapl">Do
+                                                    payment</button>
+                                                <!-- <span>Make payment<i
+                                                                class="fas fa-long-arrow-alt-right ms-2"></i></span> -->
+                                            </div>
+
+
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endblock %}
+</body>
+
+</html>

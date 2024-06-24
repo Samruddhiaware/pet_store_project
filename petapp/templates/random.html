@@ -1,0 +1,78 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="../petview/">Pet Store</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" href="../petview/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'viewcart' %}">View Cart</a>
+          </li>
+          <!-- Filter By -->
+
+          <li class="nav-item dropdown">
+            <form action="{% url 'filterbycategory' %}" method="post">
+              {% csrf_token %}
+              <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter
+                <span class="caret"></span></button>
+              <input type="hidden" value="{{petobject.species}}" name="species">
+              <ul class="dropdown-menu">
+                <li>
+                  <td><button class="dropdown-item" role="link" name="filterbycategory" value="Corgi"
+                      type="submit">Corgi</button></td>
+                </li>
+                <li>
+                  <td><button class="dropdown-item" role="link" name="filterbycategory" value="Beagle"
+                      type="submit">Beagle</button></td>
+                </li>
+              </ul>
+            </form>
+
+            <form method="post">
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'filterbycategory' %}">Dog</a></li>
+                <li><a class="dropdown-item" href="{% url 'filterbycategory' %}">Cat</a></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="#">Something else here</a></li>
+              </ul>
+            </form>
+          </li>
+          <!-- Sort By -->
+          <li class="nav-item dropdown">
+            <div class="dropdown">
+              <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Sort
+                <span class="caret"></span></button>
+              <ul class="dropdown-menu">
+                <li><a href="{% url 'sortby' %}">price</a></li>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+          </li>
+          <li>
+            
+          </li>
+        </ul>
+        <form class="d-flex" role="search" method="post" action="{% url 'search' %}">
+          {% csrf_token %}
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="searchquery">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+        
+
+
+        <h5>Welcome, {{session}}</h5>
+        <div>
+          <a href="{% url 'logout' %}">Logout</a>
+        </div>
+
+      </div>
+    </div>
+  </nav>
